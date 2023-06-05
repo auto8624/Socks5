@@ -1,1 +1,139 @@
+#!/bin/bash
+
+
+# 检查是否以root权限执行
+if [[ $EUID -ne 0 ]]; then
+  echo "请使用root权限运行此脚本"
+  exit 1
+fi
+
+
+# 检查操作系统
+if [[ ! -f /etc/os-release ]]; then
+  echo "无法确定操作系统类型"
+  exit 1
+fi
+source /etc/os-release
+if [[ "${ID}" != "centos" || ( "${VERSION_ID}" != "7" && "${VERSION_ID}" != "8" ) ]]; then
+  echo "本脚本仅支持CentOS7或8"
+  exit 1
+fi
+
+
+# 显示命令菜单
+show_menu() {
+  echo "命令菜单:"
+  echo "1. 安装 Socks5"
+  echo "2. 重启 Socks5"
+  echo "3. 修改 Socks5"
+  echo "4. 卸载 Socks5"
+  echo "0. 退出脚本"
+}
+
+
+# 安装 Socks5
+action1() {
+if [ ! -f "/usr/local/bin/gost" ]; then
+  # 下载配套程序和脚本
+  curl -o /usr/local/bin/gost -L https://github.com/AaIT-io/Socks5/raw/main/gost
+  curl -o /usr/local/bin/ss5 -L https://github.com/AaIT-io/Socks5/raw/main/ss5
+  curl -o /usr/local/bin/ss5-start -L https://github.com/AaIT-io/Socks5/raw/main/ss5-start
+  chmod 755 /usr/local/bin/
+  # 询问Socks5账号密码端口
+  echo "输入Socks5账号："
+  read user
+  echo "输入Socks5密码："
+  read pass
+  echo "输入Socks5端口："
+  read port
+  # 把用户输入保存到配置文件
+  echo "$user" > /opt/ss5.conf
+  echo "$pass" >> /opt/ss5.conf
+  echo "$port" >> /opt/ss5.conf
+  # 配置计划任务
+  echo >> /etc/crontab
+  echo "*/1 * * * * root /usr/local/bin/ss5-start" >> /etc/crontab
+  # 输出配置信息
+  echo "Socks5 安装成功连接信息如下"
+  echo "注意显示端口为虚拟机内部端口"
+  echo "NAT机型要替换为公网IP的端口"
+  echo "Socks5 启动需要一分钟"
+  ip=$(curl -sS https://api.ipify.org)
+  echo -e
+  echo "socks5://$ip:$port:$user:$pass"
+  echo -e
+  exit
+else
+  echo "Socks5 已安装配置如下"
+  # 读取配置
+  conf="/opt/ss5.conf"
+  if [ -f "$conf" ]; then
+    read -r user < "$conf"
+    read -r pass < "$conf"
+    read -r port < "$conf"
+  else
+    echo "配置文件不存在请重新安装"
+    exit
+  fi
+  # 显示当前配置
+  ip=$(curl -sS https://api.ipify.org)
+  echo -e
+  echo "socks5://$ip:$port:$user:$pass"
+  echo -e
+  exit
+fi
+}
+
+
+# 重启 Socks5
+action2() {
+  echo "执行动作 2"
+  # 添加你想要执行的动作 2 的代码
+}
+
+
+# 修改 Socks5
+action3() {
+  echo "执行动作 3"
+  # 添加你想要执行的动作 3 的代码
+}
+
+
+# 卸载 Socks5
+action4() {
+  echo "执行动作 4"
+  # 添加你想要执行的动作 4 的代码
+}
+
+
+# 主程序
+while true; do
+  show_menu  # 显示命令菜单
+
+  # 读取用户输入的数字
+  read -p "输入要执行的动作: " choice
+
+  case $choice in
+    1)
+      action1
+      ;;
+    2)
+      action2
+      ;;
+    3)
+      action3
+      ;;
+    4)
+      action4
+      ;;
+    0)
+      echo "退出脚本"
+      break  # 退出脚本
+      ;;
+    *)
+      echo "无效输入，请重新输入"
+      ;;
+  esac
+  echo
+done
 
