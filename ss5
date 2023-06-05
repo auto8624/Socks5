@@ -38,7 +38,7 @@ if [ ! -f "/usr/local/bin/gost" ]; then
   curl -o /usr/local/bin/gost -L https://github.com/AaIT-io/Socks5/raw/main/gost
   curl -o /usr/local/bin/ss5 -L https://github.com/AaIT-io/Socks5/raw/main/ss5
   curl -o /usr/local/bin/ss5-start -L https://github.com/AaIT-io/Socks5/raw/main/ss5-start
-  chmod 755 /usr/local/bin/
+  chmod 755 /usr/local/bin/*
   # 询问Socks5账号密码端口
   echo "输入Socks5账号："
   read user
@@ -68,9 +68,9 @@ else
   # 读取配置
   conf="/opt/ss5.conf"
   if [ -f "$conf" ]; then
-    read -r user < "$conf"
-    read -r pass < "$conf"
-    read -r port < "$conf"
+    user=$(sed -n '1p' /opt/ss5.conf)
+    pass=$(sed -n '2p' /opt/ss5.conf)
+    port=$(sed -n '3p' /opt/ss5.conf)
   else
     echo "配置文件不存在请重新安装"
     exit
