@@ -84,7 +84,7 @@ else
     exit
   fi
   # 显示当前配置
-  ip=$(curl -sS https://api.ipify.org)
+  ip=$(curl -sS https://api.my-ip.io/ip)
   echo -e
   echo -e "\033[32msocks5://$ip:$port:$user:$pass\033[0m"
   echo -e
@@ -151,7 +151,7 @@ action3() {
       exit
     fi
     # 显示当前配置
-    ip=$(curl -sS https://api.ipify.org)
+    ip=$(curl -sS https://api.my-ip.io/ip)
     echo -e
     echo -e "\033[32msocks5://$ip:$port:$user:$pass\033[0m"
     echo -e
