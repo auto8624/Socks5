@@ -22,12 +22,17 @@ fi
 
 # 显示命令菜单
 show_menu() {
-  echo "命令菜单:"
+  echo -e
+  echo -e "\033[32m----------- AaIT.io 专注住宅IP服务器 --------------\033[0m"
+  echo -e "\033[32m--------- 自有硬件与基础设施当地租房拉宽带 --------\033[0m"
+  echo -e "\033[32m------- 跨境电商TikTok直播养号ChatGPT全搞定 -------\033[0m"
+  echo -e
   echo "1. 安装 Socks5"
   echo "2. 重启 Socks5"
   echo "3. 修改 Socks5"
   echo "4. 卸载 Socks5"
-  echo "0. 退出脚本"
+  echo "0. 退出"
+  echo -e
 }
 
 
@@ -57,10 +62,10 @@ if [ ! -f "/usr/local/bin/gost" ]; then
   echo "Socks5 安装成功连接信息如下"
   echo "注意显示端口为虚拟机内部端口"
   echo "NAT机型要替换为公网IP的端口"
-  echo "Socks5 启动需要一分钟"
-  ip=$(curl -sS https://api.ipify.org)
+  echo -e "\033[32m终端输 ss5 即可显示管理界面\033[0m"
+  ip=$(curl -sS https://api.my-ip.io/ip)
   echo -e
-  echo "socks5://$ip:$port:$user:$pass"
+  echo -e "\033[32msocks5://$ip:$port:$user:$pass\033[0m"
   echo -e
   exit
 else
@@ -78,7 +83,7 @@ else
   # 显示当前配置
   ip=$(curl -sS https://api.ipify.org)
   echo -e
-  echo "socks5://$ip:$port:$user:$pass"
+  echo -e "\033[32msocks5://$ip:$port:$user:$pass\033[0m"
   echo -e
   exit
 fi
@@ -87,22 +92,81 @@ fi
 
 # 重启 Socks5
 action2() {
-  echo "执行动作 2"
-  # 添加你想要执行的动作 2 的代码
+  pkill -9 gost
+  sleep 2s
+  /usr/local/bin/ss5-start
+  sleep 2s
+  if pgrep -x "gost" >/dev/null; then
+    echo "Socks5 重启成功"
+  else
+    echo "Socks5 启动失败"
+  fi
+  exit
 }
 
 
 # 修改 Socks5
 action3() {
-  echo "执行动作 3"
-  # 添加你想要执行的动作 3 的代码
+  # 询问Socks5账号密码端口
+  echo "输入Socks5账号："
+  read user
+  echo "输入Socks5密码："
+  read pass
+  echo "输入Socks5端口："
+  read port
+  # 把用户输入保存到配置文件
+  echo "$user" > /opt/ss5.conf
+  echo "$pass" >> /opt/ss5.conf
+  echo "$port" >> /opt/ss5.conf
+  sleep 2s
+  echo "配置修改成功正在重启 Socks5 ..."
+  # 重启 Socks5
+  pkill -9 gost
+  sleep 2s
+  /usr/local/bin/ss5-start
+  sleep 2s
+  #判断是否启动成功
+  if pgrep -x "gost" >/dev/null; then
+    echo "Socks5 重启成功"
+  else
+    echo "Socks5 启动失败"
+  fi
+  # 读取配置
+  conf="/opt/ss5.conf"
+  if [ -f "$conf" ]; then
+    user=$(sed -n '1p' /opt/ss5.conf)
+    pass=$(sed -n '2p' /opt/ss5.conf)
+    port=$(sed -n '3p' /opt/ss5.conf)
+  else
+    echo "配置文件不存在请重新安装"
+    exit
+  fi
+  # 显示当前配置
+  ip=$(curl -sS https://api.ipify.org)
+  echo -e
+  echo -e "\033[32msocks5://$ip:$port:$user:$pass\033[0m"
+  echo -e
+  exit
 }
 
 
 # 卸载 Socks5
 action4() {
-  echo "执行动作 4"
-  # 添加你想要执行的动作 4 的代码
+  read -p "确定要卸载？(y/n): " choice
+  if [[ $choice == "y" || $choice == "Y" ]]; then
+      echo "正在卸载 ..."
+      sed -i '/ss5-start/d' /etc/crontab
+      sed -i '/^$/d' /etc/crontab
+      pkill -9 gost
+      rm -rf /opt/ss5.conf
+      rm -rf /usr/local/bin/gost
+      rm -rf /usr/local/bin/ss5
+      rm -rf /usr/local/bin/ss5-start
+      echo "Socks5 卸载完成，毫无残留比脸都干净 ..."
+  else
+      echo "卸载已取消"
+  fi
+  exit
 }
 
 
@@ -111,7 +175,7 @@ while true; do
   show_menu  # 显示命令菜单
 
   # 读取用户输入的数字
-  read -p "输入要执行的动作: " choice
+  read -p "输入动作: " choice
 
   case $choice in
     1)
@@ -127,13 +191,16 @@ while true; do
       action4
       ;;
     0)
-      echo "退出脚本"
       break  # 退出脚本
       ;;
     *)
-      echo "无效输入，请重新输入"
+      echo "无效输入"
       ;;
   esac
   echo
 done
+
+
+# 屏蔽邮件提示消息
+>/dev/null 2>&1
 

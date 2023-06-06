@@ -29,6 +29,6 @@ if [[ $current_time == $target_time ]]; then
   sleep 55s
   pkill -9 gost
 else
-  echo "还没到重启时间别着急"
+  echo "" >/dev/null
 fi
 
