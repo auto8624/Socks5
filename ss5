@@ -92,81 +92,96 @@ fi
 
 # 重启 Socks5
 action2() {
-  pkill -9 gost
-  sleep 2s
-  /usr/local/bin/ss5-start
-  sleep 2s
-  if pgrep -x "gost" >/dev/null; then
-    echo "Socks5 重启成功"
+  if [ -f "/usr/local/bin/gost" ]; then
+    pkill -9 gost
+    sleep 2s
+    /usr/local/bin/ss5-start
+    sleep 2s
+    if pgrep -x "gost" >/dev/null; then
+      echo "Socks5 重启成功"
+    else
+      echo "Socks5 启动失败"
+    fi
+    exit
   else
-    echo "Socks5 启动失败"
+    echo "您并未安装 Socks5 重启个毛啊"
+    exit
   fi
-  exit
 }
 
 
 # 修改 Socks5
 action3() {
-  # 询问Socks5账号密码端口
-  echo "输入Socks5账号："
-  read user
-  echo "输入Socks5密码："
-  read pass
-  echo "输入Socks5端口："
-  read port
-  # 把用户输入保存到配置文件
-  echo "$user" > /opt/ss5.conf
-  echo "$pass" >> /opt/ss5.conf
-  echo "$port" >> /opt/ss5.conf
-  sleep 2s
-  echo "配置修改成功正在重启 Socks5 ..."
-  # 重启 Socks5
-  pkill -9 gost
-  sleep 2s
-  /usr/local/bin/ss5-start
-  sleep 2s
-  #判断是否启动成功
-  if pgrep -x "gost" >/dev/null; then
-    echo "Socks5 重启成功"
+  if [ -f "/usr/local/bin/gost" ]; then
+    # 询问Socks5账号密码端口
+    echo "输入Socks5账号："
+    read user
+    echo "输入Socks5密码："
+    read pass
+    echo "输入Socks5端口："
+    read port
+    # 把用户输入保存到配置文件
+    echo "$user" > /opt/ss5.conf
+    echo "$pass" >> /opt/ss5.conf
+    echo "$port" >> /opt/ss5.conf
+    sleep 2s
+    echo "配置修改成功正在重启 Socks5 ..."
+    # 重启 Socks5
+    pkill -9 gost
+    sleep 2s
+    /usr/local/bin/ss5-start
+    sleep 2s
+    #判断是否启动成功
+    if pgrep -x "gost" >/dev/null; then
+      echo "Socks5 重启成功"
+    else
+      echo "Socks5 启动失败"
+    fi
+    # 读取配置
+    conf="/opt/ss5.conf"
+    if [ -f "$conf" ]; then
+      user=$(sed -n '1p' /opt/ss5.conf)
+      pass=$(sed -n '2p' /opt/ss5.conf)
+      port=$(sed -n '3p' /opt/ss5.conf)
+    else
+      echo "配置文件不存在请重新安装"
+      exit
+    fi
+    # 显示当前配置
+    ip=$(curl -sS https://api.ipify.org)
+    echo -e
+    echo -e "\033[32msocks5://$ip:$port:$user:$pass\033[0m"
+    echo -e
+    exit
   else
-    echo "Socks5 启动失败"
-  fi
-  # 读取配置
-  conf="/opt/ss5.conf"
-  if [ -f "$conf" ]; then
-    user=$(sed -n '1p' /opt/ss5.conf)
-    pass=$(sed -n '2p' /opt/ss5.conf)
-    port=$(sed -n '3p' /opt/ss5.conf)
-  else
-    echo "配置文件不存在请重新安装"
+    echo "您并未安装 Socks5 请先安装"
     exit
   fi
-  # 显示当前配置
-  ip=$(curl -sS https://api.ipify.org)
-  echo -e
-  echo -e "\033[32msocks5://$ip:$port:$user:$pass\033[0m"
-  echo -e
-  exit
 }
 
 
 # 卸载 Socks5
 action4() {
-  read -p "确定要卸载？(y/n): " choice
-  if [[ $choice == "y" || $choice == "Y" ]]; then
-      echo "正在卸载 ..."
-      sed -i '/ss5-start/d' /etc/crontab
-      sed -i '/^$/d' /etc/crontab
-      pkill -9 gost
-      rm -rf /opt/ss5.conf
-      rm -rf /usr/local/bin/gost
-      rm -rf /usr/local/bin/ss5
-      rm -rf /usr/local/bin/ss5-start
-      echo "Socks5 卸载完成，毫无残留比脸都干净 ..."
+  if [ -f "/usr/local/bin/gost" ]; then
+    read -p "确定要卸载？(y/n): " choice
+    if [[ $choice == "y" || $choice == "Y" ]]; then
+        echo "正在卸载 ..."
+        sed -i '/ss5-start/d' /etc/crontab
+        sed -i '/^$/d' /etc/crontab
+        pkill -9 gost
+        rm -rf /opt/ss5.conf
+        rm -rf /usr/local/bin/gost
+        rm -rf /usr/local/bin/ss5
+        rm -rf /usr/local/bin/ss5-start
+        echo "Socks5 卸载完成，毫无残留比脸都干净 ..."
+    else
+        echo "卸载已取消"
+    fi
+    exit
   else
-      echo "卸载已取消"
+    echo "您并未安装 Socks5 无需卸载"
+    exit
   fi
-  exit
 }
 
 
