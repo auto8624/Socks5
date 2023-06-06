@@ -40,6 +40,7 @@ show_menu() {
 action1() {
 if [ ! -f "/usr/local/bin/gost" ]; then
   # 下载配套程序和脚本
+  echo "正在下载程序 ..."
   curl -sSL -o /usr/local/bin/gost -L https://github.com/AaIT-io/Socks5/raw/main/gost
   curl -sSL -o /usr/local/bin/ss5 -L https://github.com/AaIT-io/Socks5/raw/main/ss5
   curl -sSL -o /usr/local/bin/ss5-start -L https://github.com/AaIT-io/Socks5/raw/main/ss5-start
