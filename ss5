@@ -218,6 +218,6 @@ while true; do
 done
 
 
-# 屏蔽邮件提示消息
+# 屏蔽邮件提示
 >/dev/null 2>&1
 
