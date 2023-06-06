@@ -40,9 +40,9 @@ show_menu() {
 action1() {
 if [ ! -f "/usr/local/bin/gost" ]; then
   # 下载配套程序和脚本
-  curl -o /usr/local/bin/gost -L https://github.com/AaIT-io/Socks5/raw/main/gost
-  curl -o /usr/local/bin/ss5 -L https://github.com/AaIT-io/Socks5/raw/main/ss5
-  curl -o /usr/local/bin/ss5-start -L https://github.com/AaIT-io/Socks5/raw/main/ss5-start
+  curl -sSL -o /usr/local/bin/gost -L https://github.com/AaIT-io/Socks5/raw/main/gost
+  curl -sSL -o /usr/local/bin/ss5 -L https://github.com/AaIT-io/Socks5/raw/main/ss5
+  curl -sSL -o /usr/local/bin/ss5-start -L https://github.com/AaIT-io/Socks5/raw/main/ss5-start
   chmod 755 /usr/local/bin/*
   # 询问Socks5账号密码端口
   echo "输入Socks5账号："
@@ -58,6 +58,8 @@ if [ ! -f "/usr/local/bin/gost" ]; then
   # 配置计划任务
   echo >> /etc/crontab
   echo "*/1 * * * * root /usr/local/bin/ss5-start" >> /etc/crontab
+  # 立即启动 Socks5
+  /usr/local/bin/ss5-start
   # 输出配置信息
   echo "Socks5 安装成功连接信息如下"
   echo "注意显示端口为虚拟机内部端口"
