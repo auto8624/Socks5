@@ -106,7 +106,7 @@ action2() {
     fi
     exit
   else
-    echo "您并未安装 Socks5 重启个毛啊"
+    echo "您并未安装 Socks5 重启个毛"
     exit
   fi
 }
