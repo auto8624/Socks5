@@ -4,9 +4,9 @@
 # 读取配置
 conf="/opt/ss5.conf"
 if [ -f "$conf" ]; then
-    user=$(sed -n '1p' /opt/ss5.conf)
-    pass=$(sed -n '2p' /opt/ss5.conf)
-    port=$(sed -n '3p' /opt/ss5.conf)
+    user=$(sed -n '1p' $conf)
+    pass=$(sed -n '2p' $conf)
+    port=$(sed -n '3p' $conf)
 else
     echo "配置文件不存在请重新安装"
     exit
